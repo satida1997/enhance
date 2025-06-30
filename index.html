@@ -6,22 +6,29 @@
   <title>Franck&sa Family</title>
   <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;700&display=swap" rel="stylesheet">
   <script src="https://cdn.tailwindcss.com"></script>
+  
   <link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css">
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <style>
     body {
       font-family: 'Kanit', sans-serif;
-      background-color: #F8F0E3; /* Light cream/cookie dough background */
+      /* --- พื้นหลังรูปภาพโดนัทและเบเกอรี่ (โปรดเปลี่ยน URL รูปภาพของคุณที่นี่!) --- */
+      background-image: url('https://i.ibb.co/hK2j2Yg/cookie-run-bakery-bg.png'); /* ตัวอย่าง URL: รูปภาพเบเกอรี่สไตล์ Cookie Run */
+      background-size: cover; /* ทำให้รูปภาพคลุมพื้นที่ทั้งหมด */
+      background-position: center; /* จัดตำแหน่งรูปภาพให้อยู่ตรงกลาง */
+      background-attachment: fixed; /* ทำให้รูปภาพพื้นหลังอยู่กับที่เมื่อเลื่อนหน้าจอ */
+      background-color: #F8F0E3; /* สีพื้นหลังสำรอง ถ้าโหลดรูปไม่ได้ */
+      /* ------------------------------------------------------------------ */
     }
     .active-btn {
-      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Stronger shadow */
-      transform: translateY(-4px); /* More pronounced lift */
-      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy transition */
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); 
+      transform: translateY(-4px); 
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
     }
     .btn-toggle {
-      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy transition */
-      cursor: pointer; /* Indicate clickable */
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+      cursor: pointer; 
     }
     /* Custom scrollbar for record list */
     #recordList {
@@ -33,15 +40,15 @@
       width: 8px;
     }
     #recordList::-webkit-scrollbar-track {
-      background: #EADBC8; /* Cookie-like track */
+      background: #EADBC8; 
       border-radius: 10px;
     }
     #recordList::-webkit-scrollbar-thumb {
-      background: #DAA06D; /* Brown cookie thumb */
+      background: #DAA06D; 
       border-radius: 10px;
     }
     #recordList::-webkit-scrollbar-thumb:hover {
-      background: #B07B4C; /* Darker brown on hover */
+      background: #B07B4C; 
     }
     /* Smooth transition for input focus */
     input:focus, select:focus {
@@ -97,7 +104,7 @@
     <div class="bg-white p-6 rounded-xl shadow-lg border border-[#F0EAD6]">
       <h2 class="text-2xl font-bold text-[#D2691E] mb-4 flex items-center gap-2">
         <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-[#DAA06D]" viewBox="0 0 20 20" fill="currentColor">
-          <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
+          <path fill-rule="evenodd" d="M6 2a1 1 0 00-.894.553L7.382 4H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
         </svg>
         รายการย้อนหลัง
       </h2>
@@ -107,7 +114,7 @@
 
   <script>
     // **โปรดเปลี่ยน URL นี้ด้วย Web app URL ของ Google Apps Script ของคุณ**
-    const scriptUrl = "https://script.google.com/macros/s/AKfycbwwVD5eLWteRbTSs8AakbntCb-2iQ5lGqR3BeM8O3VEKNQt3NnAqBHrRec4lSqr1X0mKA/exec"; 
+    const scriptUrl = "YOUR_GOOGLE_APPS_SCRIPT_URL_HERE"; 
 
     const incomeBtn = document.getElementById("incomeBtn");
     const expenseBtn = document.getElementById("expenseBtn");
@@ -202,7 +209,7 @@
         close: true,
         gravity: "top", 
         position: "center", 
-        backgroundColor: "linear-gradient(to right, #6D9773, #A5DD9B)", /* Cookie Run Green */
+        backgroundColor: "linear-gradient(to right, #6D9773, #A5DD9B)", 
         stopOnFocus: true,
       }).showToast();
       setTimeout(() => {
@@ -229,7 +236,7 @@
         close: true,
         gravity: "top", 
         position: "center", 
-        backgroundColor: "linear-gradient(to right, #E91E63, #C2185B)", /* Cookie Run Red */
+        backgroundColor: "linear-gradient(to right, #E91E63, #C2185B)", 
         stopOnFocus: true,
       }).showToast();
       setTimeout(() => {
@@ -250,9 +257,9 @@
           datasets: [{
             label: 'ยอดรวม (บาท)',
             data: [totalIncome, Math.abs(totalExpense)],
-            backgroundColor: ['#8B4513', '#E91E63'], /* Cookie Run Brown for Income, Pink for Expense */
-            borderRadius: 15, /* More rounded for jelly effect */
-            borderSkipped: false, /* Ensure all corners are rounded */
+            backgroundColor: ['#8B4513', '#E91E63'], 
+            borderRadius: 15, 
+            borderSkipped: false, 
           }]
         },
         options: {
@@ -272,7 +279,7 @@
             y: {
               beginAtZero: true,
               grid: {
-                color: '#EADBC8' /* Lighter grid lines */
+                color: '#EADBC8' 
               },
               ticks: {
                 callback: function(value) {
@@ -287,11 +294,10 @@
             }
           },
           animation: {
-            duration: 1000, /* Slower animation for jelly effect */
-            easing: 'easeOutElastic', /* Bouncy easing function */
+            duration: 1000, 
+            easing: 'easeOutElastic', 
             onComplete: function() {
-              // Optional: Add a subtle bounce after animation completes
-              // This might require a custom plugin or more advanced Chart.js features
+              
             }
           }
         }
@@ -329,7 +335,7 @@
         grouped[date].forEach(row => {
           const item = document.createElement("div");
           item.className = "flex justify-between items-center py-2"; 
-          const amountClass = row.amount >= 0 ? 'text-[#8B4513]' : 'text-[#E91E63]'; /* Cookie Run colors */
+          const amountClass = row.amount >= 0 ? 'text-[#8B4513]' : 'text-[#E91E63]'; 
           const amountSign = row.amount >= 0 ? '+' : '';
 
           item.innerHTML = `
@@ -395,7 +401,7 @@
           close: true,
           gravity: "top", 
           position: "center", 
-          backgroundColor: "linear-gradient(to right, #DAA06D, #B07B4C)", /* Cookie Run Brown */
+          backgroundColor: "linear-gradient(to right, #DAA06D, #B07B4C)", 
           stopOnFocus: true,
         }).showToast();
     }
