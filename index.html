@@ -157,13 +157,16 @@
         body: new URLSearchParams(payload).toString()
       });
 
-      location.reload(); 
+      location.reload(); // รีโหลดหน้าเพื่อแสดงข้อมูลที่อัปเดต
     }
 
     async function deleteRecord(index) {
-      if (!confirm("คุณต้องการลบรายการนี้จริงหรือไม่?")) return; 
+      if (!confirm("คุณต้องการลบรายการนี้จริงหรือไม่?")) return; // ถามยืนยันการลบ
+
+      // ส่งคำสั่งลบไปยัง Google Apps Script พร้อม index ของแถว (+1 เพราะ Google Sheet นับแถวเริ่มต้นที่ 1)
       await fetch(scriptUrl + `?action=delete&index=${index + 1}`); 
-      location.reload(); 
+      
+      location.reload(); // รีโหลดหน้าเพื่อแสดงข้อมูลที่อัปเดต
     }
 
     function renderChart(totalIncome, totalExpense) {
@@ -218,7 +221,7 @@
     }
 
     async function fetchData() {
-      const res = await fetch(scriptUrl + '?t=' + new Date().getTime()); 
+      const res = await fetch(scriptUrl + '?t=' + new Date().getTime()); // เพิ่ม ?t=timestamp เพื่อป้องกัน cache
       const data = await res.json();
 
       let totalIncome = 0, totalExpense = 0;
@@ -229,7 +232,7 @@
       data.forEach((row, i) => {
         const dateOnly = toThaiDate(row.date);
         if (!grouped[dateOnly]) grouped[dateOnly] = [];
-        grouped[dateOnly].push({ ...row, index: i }); 
+        grouped[dateOnly].push({ ...row, index: i }); // เก็บ index เดิมไว้สำหรับฟังก์ชันลบ/แก้ไข
 
         if (row.amount >= 0) totalIncome += row.amount;
         else totalExpense += row.amount;
