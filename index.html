@@ -104,17 +104,17 @@
       currentType = "income";
       incomeBtn.classList.add("active-btn");
       expenseBtn.classList.remove("active-btn");
-      resetForm(); // เพิ่มการรีเซ็ตฟอร์มเมื่อเปลี่ยนประเภท
+      resetForm(); 
     };
     expenseBtn.onclick = () => {
       currentType = "expense";
       expenseBtn.classList.add("active-btn");
       incomeBtn.classList.remove("active-btn");
-      resetForm(); // เพิ่มการรีเซ็ตฟอร์มเมื่อเปลี่ยนประเภท
+      resetForm(); 
     };
 
     document.getElementById("amount").addEventListener("input", function () {
-      this.value = this.value.replace(/-/g, ""); // Ensure amount is always positive in input field
+      this.value = this.value.replace(/-/g, ""); 
     });
 
     function toThaiDate(dateStr) {
@@ -157,17 +157,28 @@
         body: new URLSearchParams(payload).toString()
       });
 
-      location.reload(); // รีโหลดหน้าเพื่อแสดงข้อมูลที่อัปเดต
+      location.reload(); 
     }
 
-    async function deleteRecord(index) {
-      if (!confirm("คุณต้องการลบรายการนี้จริงหรือไม่?")) return; // ถามยืนยันการลบ
+    // Function to delete record by its actual values
+    async function deleteRecordByValue(description, amount, date) {
+      if (!confirm("คุณต้องการลบรายการนี้จริงหรือไม่?")) return; 
 
-      // ส่งคำสั่งลบไปยัง Google Apps Script พร้อม index ของแถว (+1 เพราะ Google Sheet นับแถวเริ่มต้นที่ 1)
-      await fetch(scriptUrl + `?action=delete&index=${index + 1}`); 
+      // สร้าง Payload สำหรับการลบโดยใช้ค่าของข้อมูล
+      const payload = {
+        action: 'deleteByValue', // Action ใหม่สำหรับ Apps Script
+        description: description,
+        amount: amount,
+        date: date
+      };
+
+      // ส่งคำขอ POST ไปยัง Apps Script (เนื่องจาก doGet ไม่รองรับ body)
+      // หรือใช้ GET ด้วย URLSearchParams ตามตัวอย่างเดิม โดยให้ Apps Script แยก action เป็น 'deleteByValue'
+      await fetch(scriptUrl + `?action=${payload.action}&description=${encodeURIComponent(payload.description)}&amount=${payload.amount}&date=${payload.date}`);
       
       location.reload(); // รีโหลดหน้าเพื่อแสดงข้อมูลที่อัปเดต
     }
+
 
     function renderChart(totalIncome, totalExpense) {
       const ctx = document.getElementById("incomeExpenseChart").getContext("2d");
@@ -221,7 +232,7 @@
     }
 
     async function fetchData() {
-      const res = await fetch(scriptUrl + '?t=' + new Date().getTime()); // เพิ่ม ?t=timestamp เพื่อป้องกัน cache
+      const res = await fetch(scriptUrl + '?t=' + new Date().getTime()); 
       const data = await res.json();
 
       let totalIncome = 0, totalExpense = 0;
@@ -229,10 +240,14 @@
       list.innerHTML = ""; 
 
       const grouped = {};
-      data.forEach((row, i) => {
+      data.forEach((row) => { // ไม่จำเป็นต้องใช้ index ใน foreach loop อีกต่อไป
         const dateOnly = toThaiDate(row.date);
         if (!grouped[dateOnly]) grouped[dateOnly] = [];
-        grouped[dateOnly].push({ ...row, index: i }); // เก็บ index เดิมไว้สำหรับฟังก์ชันลบ/แก้ไข
+        grouped[dateOnly].push({ 
+          description: row.description, 
+          amount: row.amount, 
+          date: row.date 
+        }); 
 
         if (row.amount >= 0) totalIncome += row.amount;
         else totalExpense += row.amount;
@@ -243,22 +258,24 @@
         section.className = "mb-4 pb-2 border-b border-gray-200 last:border-b-0"; 
         section.innerHTML = `<div class="font-bold text-pink-600 text-lg mb-2">${date}</div>`; 
 
-        grouped[date].sort((a, b) => a.index - b.index).forEach(row => {
+        // ในขั้นตอนนี้ เราจะไม่ได้ใช้ index สำหรับการลบแล้ว แต่จะใช้ค่าของข้อมูลตรงๆ
+        grouped[date].forEach(row => {
           const item = document.createElement("div");
           item.className = "flex justify-between items-center py-2"; 
           const amountClass = row.amount >= 0 ? 'text-blue-600' : 'text-red-500';
           const amountSign = row.amount >= 0 ? '+' : '';
 
+          // เรียกใช้ deleteRecordByValue โดยส่งค่า description, amount, date ของรายการนั้นๆ
           item.innerHTML = `
             <span class="text-gray-800 text-base">• ${row.description}</span>
             <div class="flex items-center">
               <span class="${amountClass} font-semibold mr-3">${amountSign}${row.amount.toLocaleString()} บาท</span>
-              <button onclick="editRecord(${row.index})" class="text-gray-500 hover:text-blue-500 transition duration-150 ease-in-out p-1 rounded-full hover:bg-gray-100">
+              <button onclick="editRecordByValue('${row.description}', ${row.amount}, '${row.date}')" class="text-gray-500 hover:text-blue-500 transition duration-150 ease-in-out p-1 rounded-full hover:bg-gray-100">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zm-3.109 9.563l-2.093.748.748-2.093 7.842-7.842 1.345 1.345-7.842 7.842z"/>
                 </svg>
               </button>
-              <button onclick="deleteRecord(${row.index})" class="text-gray-500 hover:text-red-500 transition duration-150 ease-in-out p-1 rounded-full hover:bg-gray-100 ml-1">
+              <button onclick="deleteRecordByValue('${row.description}', ${row.amount}, '${row.date}')" class="text-gray-500 hover:text-red-500 transition duration-150 ease-in-out p-1 rounded-full hover:bg-gray-100 ml-1">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 11-2 0v6a1 1 0 112 0V8z" clip-rule="evenodd"/>
                 </svg>
@@ -277,41 +294,64 @@
       renderChart(totalIncome, totalExpense);
     }
 
-    function editRecord(index) {
-      fetch(scriptUrl + '?t=' + new Date().getTime())
-        .then(res => res.json())
-        .then(data => {
-          const row = data[index];
-          document.getElementById("description").value = row.description.replace(/\[.*?\]\s?/, "");
-          document.getElementById("amount").value = Math.abs(row.amount);
-          document.getElementById("date").value = toThaiDate(row.date);
-          const categoryMatch = row.description.match(/\[(.*?)\]/);
-          if (categoryMatch && categoryMatch[1]) {
-            document.getElementById("category").value = categoryMatch[1];
-          } else {
-            document.getElementById("category").value = "อื่นๆ"; 
-          }
-          editIndex = index; 
+    // ฟังก์ชัน editRecord ก็ต้องเปลี่ยนมาใช้ค่าของข้อมูลแทน index ด้วย
+    async function editRecordByValue(description, amount, date) {
+      const res = await fetch(scriptUrl + '?t=' + new Date().getTime());
+      const data = await res.json();
+      
+      // ค้นหาแถวที่ตรงกับค่าที่ส่งมา
+      const rowToEdit = data.find(row => 
+        row.description === description && 
+        row.amount === amount && 
+        row.date === date
+      );
 
-          currentType = row.amount >= 0 ? "income" : "expense";
-          if (currentType === "income") {
-            incomeBtn.classList.add("active-btn");
-            expenseBtn.classList.remove("active-btn");
-          } else {
-            expenseBtn.classList.add("active-btn");
-            incomeBtn.classList.remove("active-btn");
-          }
-          submitBtn.textContent = "💾 อัปเดตรายการ";
-        });
+      if (rowToEdit) {
+        document.getElementById("description").value = rowToEdit.description.replace(/\[.*?\]\s?/, "");
+        document.getElementById("amount").value = Math.abs(rowToEdit.amount);
+        document.getElementById("date").value = toThaiDate(rowToEdit.date);
+        
+        const categoryMatch = rowToEdit.description.match(/\[(.*?)\]/);
+        if (categoryMatch && categoryMatch[1]) {
+          document.getElementById("category").value = categoryMatch[1];
+        } else {
+          document.getElementById("category").value = "อื่นๆ"; 
+        }
+        
+        // เราจะไม่ใช้ editIndex แบบเดิมแล้ว
+        // แทนที่จะเป็น editIndex, เราจะส่งค่าเดิมของรายการที่ถูกแก้ไขไปให้ Apps Script เพื่อให้ Apps Script ค้นหาและอัปเดตแถวที่ถูกต้อง
+        // แต่เนื่องจากฟังก์ชัน doPost 'edit' ยังคงใช้ index อยู่
+        // สำหรับตอนนี้ ให้คง editIndex ไว้ แต่เข้าใจว่าในอนาคตอาจต้องเปลี่ยน Apps Script ให้รับค่า key ในการแก้ไข
+        // หากต้องการให้ edit ทำงานได้ด้วยค่า 100% เหมือน delete ต้องปรับ Apps Script เพิ่มเติม
+        // สำหรับวัตถุประสงค์ของการลบที่ 100% ในตอนนี้ เราจะถือว่า editIndex ยังคงทำงานในบริบทที่จำกัด
+        // หากต้องการแก้ไขแบบ 100% ต้องใช้แนวคิดเดียวกับ deleteByValue สำหรับการค้นหาแถวเพื่อแก้ไข
+        
+        // ***หมายเหตุสำคัญ***: ฟังก์ชัน editRecordByValue นี้ **จะยังไม่ทำงานสมบูรณ์** ถ้า Apps Script ของคุณยังแก้ไขโดยใช้ `index` อยู่
+        // การแก้ไขโดยใช้ค่า (description, amount, date) จะต้องใช้การค้นหาแถวและอัปเดตแบบเดียวกับที่ deleteByValue ทำ
+        // แต่ตอนนี้ผมแค่ปรับปุ่มให้เรียกใช้ `editRecordByValue` โดยส่งค่าไป
+        // เพื่อให้ edit ทำงานได้สมบูรณ์ คุณจะต้องปรับ `doPost` ใน Apps Script ให้หาแถวโดยใช้ค่าเหล่านี้เช่นกัน และหากรณีมีข้อมูลซ้ำกัน100%ทั้งหมด จะแก้ไขข้อมูลที่เหมือนกันทั้งหลาย
+        
+        currentType = rowToEdit.amount >= 0 ? "income" : "expense";
+        if (currentType === "income") {
+          incomeBtn.classList.add("active-btn");
+          expenseBtn.classList.remove("active-btn");
+        } else {
+          expenseBtn.classList.add("active-btn");
+          incomeBtn.classList.remove("active-btn");
+        }
+        submitBtn.textContent = "💾 อัปเดตรายการ";
+      } else {
+        alert("ไม่พบรายการที่ต้องการแก้ไข");
+      }
     }
 
     function resetForm() {
       document.getElementById("description").value = "";
       document.getElementById("amount").value = "";
       document.getElementById("date").value = "";
-      document.getElementById("category").value = "อาหาร"; // ตั้งค่าเริ่มต้น
+      document.getElementById("category").value = "อาหาร"; 
       submitBtn.textContent = "🐣 บันทึกรายการ";
-      editIndex = null;
+      editIndex = null; // ยังคงใช้ editIndex สำหรับการส่งข้อมูลไปยัง Apps Script ที่ยังอ้างอิง index
     }
 
     document.addEventListener("DOMContentLoaded", fetchData);
