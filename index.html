@@ -12,15 +12,16 @@
   <style>
     body {
       font-family: 'Kanit', sans-serif;
-      background-color: #F0F4F8; /* Soft blue-gray background */
+      background-color: #F8F0E3; /* Light cream/cookie dough background */
     }
     .active-btn {
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15); /* Stronger shadow for active button */
-      transform: translateY(-3px); /* More pronounced lift */
-      transition: all 0.2s ease-in-out;
+      box-shadow: 0 6px 15px rgba(0, 0, 0, 0.2); /* Stronger shadow */
+      transform: translateY(-4px); /* More pronounced lift */
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy transition */
     }
     .btn-toggle {
-      transition: all 0.2s ease-in-out;
+      transition: all 0.25s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Bouncy transition */
+      cursor: pointer; /* Indicate clickable */
     }
     /* Custom scrollbar for record list */
     #recordList {
@@ -32,66 +33,70 @@
       width: 8px;
     }
     #recordList::-webkit-scrollbar-track {
-      background: #e2e8f0; /* Lighter track */
+      background: #EADBC8; /* Cookie-like track */
       border-radius: 10px;
     }
     #recordList::-webkit-scrollbar-thumb {
-      background: #94a3b8; /* Medium gray scroll thumb */
+      background: #DAA06D; /* Brown cookie thumb */
       border-radius: 10px;
     }
     #recordList::-webkit-scrollbar-thumb:hover {
-      background: #64748B; /* Darker gray on hover */
+      background: #B07B4C; /* Darker brown on hover */
+    }
+    /* Smooth transition for input focus */
+    input:focus, select:focus {
+      transition: all 0.2s ease-in-out;
     }
   </style>
 </head>
 <body class="p-6">
-  <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl p-6 md:p-10 border border-pink-100">
-    <h1 class="text-4xl text-pink-700 font-extrabold text-center mb-8 tracking-wide">
-      <span class="animate-pulse inline-block">💖</span> Franck&sa Family <span class="animate-pulse inline-block">💖</span>
+  <div class="max-w-4xl mx-auto bg-white rounded-3xl shadow-2xl p-6 md:p-10 border border-[#F0EAD6]">
+    <h1 class="text-4xl text-[#D2691E] font-extrabold text-center mb-8 tracking-wide">
+      <span class="animate-pulse inline-block">🍪</span> Franck&sa Family <span class="animate-pulse inline-block">🍪</span>
     </h1>
 
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-      <div class="bg-blue-50 p-5 rounded-xl text-center shadow-md border border-blue-100">
-        <div class="text-blue-600 text-xl font-semibold">รายรับ</div>
-        <div id="totalIncome" class="text-3xl mt-2 font-bold text-blue-800">฿0</div>
+      <div class="bg-[#FFF8DC] p-5 rounded-xl text-center shadow-md border border-[#F0EAD6]">
+        <div class="text-[#D2691E] text-xl font-semibold">รายรับ</div>
+        <div id="totalIncome" class="text-3xl mt-2 font-bold text-[#8B4513]">฿0</div>
       </div>
-      <div class="bg-red-50 p-5 rounded-xl text-center shadow-md border border-red-100">
-        <div class="text-red-600 text-xl font-semibold">รายจ่าย</div>
-        <div id="totalExpense" class="text-3xl mt-2 font-bold text-red-800">฿0</div>
+      <div class="bg-[#FCE4EC] p-5 rounded-xl text-center shadow-md border border-[#F8D5E1]">
+        <div class="text-[#E91E63] text-xl font-semibold">รายจ่าย</div>
+        <div id="totalExpense" class="text-3xl mt-2 font-bold text-[#C2185B]">฿0</div>
       </div>
-      <div class="bg-green-50 p-5 rounded-xl text-center shadow-md border border-green-100">
-        <div class="text-green-600 text-xl font-semibold">คงเหลือ</div>
-        <div id="balance" class="text-3xl mt-2 font-bold text-green-800">฿0</div>
+      <div class="bg-[#E8F5E9] p-5 rounded-xl text-center shadow-md border border-[#DDEEDD]">
+        <div class="text-[#4CAF50] text-xl font-semibold">คงเหลือ</div>
+        <div id="balance" class="text-3xl mt-2 font-bold text-[#2E7D32]">฿0</div>
       </div>
     </div>
 
-    <div class="bg-white p-6 rounded-xl shadow-lg mb-8 border border-gray-100">
+    <div class="bg-white p-6 rounded-xl shadow-lg mb-8 border border-[#F0EAD6]">
       <canvas id="incomeExpenseChart" height="150"></canvas>
     </div>
 
-    <div class="bg-white p-6 rounded-xl shadow-lg mb-8 border border-gray-100">
+    <div class="bg-white p-6 rounded-xl shadow-lg mb-8 border border-[#F0EAD6]">
       <div class="flex justify-center gap-4 mb-5">
-        <button id="incomeBtn" class="btn-toggle px-8 py-3 bg-blue-500 text-white font-semibold rounded-full shadow-lg active-btn hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300">รายรับ</button>
-        <button id="expenseBtn" class="btn-toggle px-8 py-3 bg-red-500 text-white font-semibold rounded-full shadow-lg hover:bg-red-600 focus:outline-none focus:ring-4 focus:ring-red-300">รายจ่าย</button>
+        <button id="incomeBtn" class="btn-toggle px-8 py-3 bg-[#8B4513] text-white font-semibold rounded-full shadow-lg active-btn hover:bg-[#A0522D] focus:outline-none focus:ring-4 focus:ring-[#DAA06D]">รายรับ</button>
+        <button id="expenseBtn" class="btn-toggle px-8 py-3 bg-[#E91E63] text-white font-semibold rounded-full shadow-lg hover:bg-[#C2185B] focus:outline-none focus:ring-4 focus:ring-[#F8D5E1]">รายจ่าย</button>
       </div>
-      <input type="text" id="description" placeholder="ชื่อรายการ เช่น ข้าวหมูทอด" class="w-full mb-4 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-300 focus:border-transparent text-gray-700 placeholder-gray-400" />
-      <input type="number" id="amount" placeholder="จำนวนเงิน" class="w-full mb-4 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-300 focus:border-transparent text-gray-700 placeholder-gray-400" />
-      <select id="category" class="w-full mb-4 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-300 focus:border-transparent bg-white text-gray-700">
+      <input type="text" id="description" placeholder="ชื่อรายการ เช่น ข้าวหมูทอด" class="w-full mb-4 p-3 border border-[#DAA06D] rounded-lg focus:ring-2 focus:ring-[#F0EAD6] focus:border-transparent text-gray-700 placeholder-gray-400" />
+      <input type="number" id="amount" placeholder="จำนวนเงิน" class="w-full mb-4 p-3 border border-[#DAA06D] rounded-lg focus:ring-2 focus:ring-[#F0EAD6] focus:border-transparent text-gray-700 placeholder-gray-400" />
+      <select id="category" class="w-full mb-4 p-3 border border-[#DAA06D] rounded-lg focus:ring-2 focus:ring-[#F0EAD6] focus:border-transparent bg-white text-gray-700">
         <option value="อาหาร">🍔 อาหาร</option>
         <option value="เดินทาง">🚗 เดินทาง</option>
         <option value="เงินเดือน">💼 เงินเดือน</option>
         <option value="บันเทิง">🎉 บันเทิง</option>
         <option value="อื่นๆ">✏️ อื่นๆ</option>
       </select>
-      <input type="date" id="date" class="w-full mb-5 p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-pink-300 focus:border-transparent text-gray-700" />
-      <button id="submitBtn" onclick="submitData()" class="w-full bg-gradient-to-r from-pink-500 to-pink-600 hover:from-pink-600 hover:to-pink-700 text-white font-bold py-3 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-pink-300 active:scale-100">
-        🐣 บันทึกรายการ
+      <input type="date" id="date" class="w-full mb-5 p-3 border border-[#DAA06D] rounded-lg focus:ring-2 focus:ring-[#F0EAD6] focus:border-transparent text-gray-700" />
+      <button id="submitBtn" onclick="submitData()" class="w-full bg-gradient-to-r from-[#D2691E] to-[#CD5C5C] hover:from-[#CD5C5C] hover:to-[#D2691E] text-white font-bold py-3 rounded-full shadow-lg transition duration-300 ease-in-out transform hover:scale-105 focus:outline-none focus:ring-4 focus:ring-[#F0EAD6] active:scale-100">
+        🍪 บันทึกรายการ
       </button>
     </div>
 
-    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
-      <h2 class="text-2xl font-bold text-pink-600 mb-4 flex items-center gap-2">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-pink-500" viewBox="0 0 20 20" fill="currentColor">
+    <div class="bg-white p-6 rounded-xl shadow-lg border border-[#F0EAD6]">
+      <h2 class="text-2xl font-bold text-[#D2691E] mb-4 flex items-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-[#DAA06D]" viewBox="0 0 20 20" fill="currentColor">
           <path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" clip-rule="evenodd" />
         </svg>
         รายการย้อนหลัง
@@ -197,7 +202,7 @@
         close: true,
         gravity: "top", 
         position: "center", 
-        backgroundColor: "linear-gradient(to right, #00b09b, #96c93d)",
+        backgroundColor: "linear-gradient(to right, #6D9773, #A5DD9B)", /* Cookie Run Green */
         stopOnFocus: true,
       }).showToast();
       setTimeout(() => {
@@ -224,7 +229,7 @@
         close: true,
         gravity: "top", 
         position: "center", 
-        backgroundColor: "linear-gradient(to right, #dc2626, #ef4444)", // Red gradient
+        backgroundColor: "linear-gradient(to right, #E91E63, #C2185B)", /* Cookie Run Red */
         stopOnFocus: true,
       }).showToast();
       setTimeout(() => {
@@ -245,8 +250,9 @@
           datasets: [{
             label: 'ยอดรวม (บาท)',
             data: [totalIncome, Math.abs(totalExpense)],
-            backgroundColor: ['#3B82F6', '#EF4444'], 
-            borderRadius: 8 // More rounded bars
+            backgroundColor: ['#8B4513', '#E91E63'], /* Cookie Run Brown for Income, Pink for Expense */
+            borderRadius: 15, /* More rounded for jelly effect */
+            borderSkipped: false, /* Ensure all corners are rounded */
           }]
         },
         options: {
@@ -266,7 +272,7 @@
             y: {
               beginAtZero: true,
               grid: {
-                color: '#e2e8f0' 
+                color: '#EADBC8' /* Lighter grid lines */
               },
               ticks: {
                 callback: function(value) {
@@ -278,6 +284,14 @@
               grid: {
                 display: false
               }
+            }
+          },
+          animation: {
+            duration: 1000, /* Slower animation for jelly effect */
+            easing: 'easeOutElastic', /* Bouncy easing function */
+            onComplete: function() {
+              // Optional: Add a subtle bounce after animation completes
+              // This might require a custom plugin or more advanced Chart.js features
             }
           }
         }
@@ -309,25 +323,25 @@
 
       Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a)).forEach(date => {
         const section = document.createElement("div");
-        section.className = "mb-4 pb-2 border-b border-gray-200 last:border-b-0"; 
-        section.innerHTML = `<div class="font-bold text-pink-600 text-lg mb-2">${date}</div>`; 
+        section.className = "mb-4 pb-2 border-b border-[#EADBC8] last:border-b-0"; 
+        section.innerHTML = `<div class="font-bold text-[#D2691E] text-lg mb-2">${date}</div>`; 
 
         grouped[date].forEach(row => {
           const item = document.createElement("div");
           item.className = "flex justify-between items-center py-2"; 
-          const amountClass = row.amount >= 0 ? 'text-blue-600' : 'text-red-500';
+          const amountClass = row.amount >= 0 ? 'text-[#8B4513]' : 'text-[#E91E63]'; /* Cookie Run colors */
           const amountSign = row.amount >= 0 ? '+' : '';
 
           item.innerHTML = `
             <span class="text-gray-800 text-base font-medium flex-1 truncate mr-2">• ${row.description}</span>
             <div class="flex items-center">
               <span class="${amountClass} font-semibold mr-3">${amountSign}${row.amount.toLocaleString()} บาท</span>
-              <button onclick="editRecordByValue('${row.description.replace(/'/g, "\\'")}', ${row.amount}, '${row.date}', ${row.timestamp})" class="text-gray-500 hover:text-blue-500 transition duration-150 ease-in-out p-1 rounded-full hover:bg-gray-200">
+              <button onclick="editRecordByValue('${row.description.replace(/'/g, "\\'")}', ${row.amount}, '${row.date}', ${row.timestamp})" class="text-gray-500 hover:text-[#DAA06D] transition duration-150 ease-in-out p-1 rounded-full hover:bg-[#F0EAD6]">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zm-3.109 9.563l-2.093.748.748-2.093 7.842-7.842 1.345 1.345-7.842 7.842z"/>
                 </svg>
               </button>
-              <button onclick="deleteRecordByValue('${row.description.replace(/'/g, "\\'")}', ${row.amount}, '${row.date}', ${row.timestamp})" class="text-gray-500 hover:text-red-500 transition duration-150 ease-in-out p-1 rounded-full hover:bg-gray-200 ml-1">
+              <button onclick="deleteRecordByValue('${row.description.replace(/'/g, "\\'")}', ${row.amount}, '${row.date}', ${row.timestamp})" class="text-gray-500 hover:text-[#E91E63] transition duration-150 ease-in-out p-1 rounded-full hover:bg-[#FCE4EC] ml-1">
                 <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                   <path fill-rule="evenodd" d="M9 2a1 1 0 00-.894.553L7.382 4H4a1 1 0 000 2v10a2 2 0 002 2h8a2 2 0 002-2V6a1 1 0 100-2h-3.382l-.724-1.447A1 1 0 0011 2H9zM7 8a1 1 0 012 0v6a1 1 0 11-2 0V8zm6 0a1 1 0 11-2 0v6a1 1 0 112 0V8z" clip-rule="evenodd"/>
                 </svg>
@@ -381,7 +395,7 @@
           close: true,
           gravity: "top", 
           position: "center", 
-          backgroundColor: "linear-gradient(to right, #60a5fa, #3b82f6)", // Blue gradient
+          backgroundColor: "linear-gradient(to right, #DAA06D, #B07B4C)", /* Cookie Run Brown */
           stopOnFocus: true,
         }).showToast();
     }
@@ -391,7 +405,7 @@
       document.getElementById("amount").value = "";
       document.getElementById("date").value = "";
       document.getElementById("category").value = "อาหาร"; 
-      submitBtn.textContent = "🐣 บันทึกรายการ";
+      submitBtn.textContent = "🍪 บันทึกรายการ";
       editModeData = null; 
     }
 
